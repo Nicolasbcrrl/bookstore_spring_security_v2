@@ -1,15 +1,13 @@
 package com.serverprogramming.bookstorev2;
 
-import com.serverprogramming.bookstorev2.domain.Book;
-import com.serverprogramming.bookstorev2.domain.BookRepository;
-import com.serverprogramming.bookstorev2.domain.Category;
-import com.serverprogramming.bookstorev2.domain.CategoryRepository;
+import com.serverprogramming.bookstorev2.domain.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
 public class Bookstorev2Application {
@@ -20,7 +18,7 @@ public class Bookstorev2Application {
     }
 
     @Bean
-    public CommandLineRunner booktransaction(BookRepository bookRepository, CategoryRepository categoryRepository){
+    public CommandLineRunner booktransaction(BookRepository bookRepository, CategoryRepository categoryRepository, UserRepository userRepository) {
         return (args) -> {
             log.info("save a couple of books");
             categoryRepository.save(new Category("Fantasy"));
@@ -44,6 +42,11 @@ public class Bookstorev2Application {
             bookRepository.save(new Book("978-3-16-148410-9", "Ready player one", "Ernest Cline", 2025, 14.20, categoryRepository.findByName("Sci-Fi")));
             bookRepository.save(new Book("978-3-16-148410-9", "Les Fleurs du Mal", "Charles Baudelaire", 2025, 14.20, categoryRepository.findByName("Romance")));
             bookRepository.save(new Book("978-3-16-148410-9", "Back to the Future", "Robert Zemeckis", 2025, 14.20, categoryRepository.findByName("Sci-Fi")));
+            //create users: admin/admin user/user
+            User user1 = new User("user", new BCryptPasswordEncoder().encode("user"),"user@gmail", "USER");
+            User user2 = new User("admin", new BCryptPasswordEncoder().encode("admin"),"admin@gmail", "ADMIN");
+            userRepository.save(user1);
+            userRepository.save(user2);
 
             log.info("fetch all books");
             for (Book book : bookRepository.findAll()) {
